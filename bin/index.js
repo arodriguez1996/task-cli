@@ -42,7 +42,7 @@ const updateFile = () => {
     fs.writeFileSync(fileName, JSON.stringify(tasks, null, 2), { encoding: 'utf8', flag: 'w' });
 }
 
-const findTask = (id) => { }
+const findTask = (id) => tasks.find(task => task.id === parseInt(id));
 
 
 if (command === 'add') {
@@ -56,8 +56,10 @@ if (command === 'add') {
 
     const date = new Date().toISOString();
 
+    const newId = tasks.at(-1) ? tasks.at(-1).id + 1 : 1;
+
     const task = {
-        id: tasks.length + 1,
+        id: newId,
         task: taskDescription,
         status: 'todo',
         createdAt: date,
@@ -66,18 +68,81 @@ if (command === 'add') {
 
     tasks.push(task);
     updateFile();
-    console.log(`Task added successfully (ID: ${tasks.length})`);
+    console.log(`Task added successfully (ID: ${newId})`);
     process.exit(1);
 }
 
 if (command === 'update') {
     const [id, taskDescription] = args;
 
+    if (!id || !taskDescription) {
+        console.log('ID and Task are required');
+        process.exit(1);
+    }
 
+    const task = findTask(id);
+
+    if (!task) {
+        console.log(`Task with ID ${id} not found`);
+        process.exit(1);
+    }
+
+    task.task = taskDescription;
+    task.updatedAt = new Date().toISOString();
+
+    updateFile();
 
     console.log(`Task updated successfully (ID: ${id})`);
     process.exit(1);
 }
+
+if (command === 'delete') {
+    const [id] = args;
+
+    if (!id) {
+        console.log('ID are required');
+        process.exit(1);
+    }
+
+    const task = findTask(id);
+
+    if (!task) {
+        console.log(`Task with ID ${id} not found`);
+        process.exit(1);
+    }
+
+    tasks = tasks.filter(task => task.id !== parseInt(id));
+
+    updateFile();
+
+    console.log(`Task deleted successfully (ID: ${id})`);
+    process.exit(1);
+}
+
+if (command === 'mark-in-progress' || command === 'mark-done') {
+    const [id] = args;
+
+    if (!id) {
+        console.log('ID are required');
+        process.exit(1);
+    }
+
+    const task = findTask(id);
+
+    if (!task) {
+        console.log(`Task with ID ${id} not found`);
+        process.exit(1);
+    }
+
+    task.status = command === 'mark-in-progress' ? 'in-progress' : 'done';
+    task.updatedAt = new Date().toISOString();
+
+    updateFile();
+
+    console.log(`Task updated successfully (ID: ${id})`);
+    process.exit(1);
+}
+
 
 
 
