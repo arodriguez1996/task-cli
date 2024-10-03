@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const { create } = require('domain');
 const fs = require('fs');
 
 const [_, __, command, ...args] = process.argv;
@@ -140,6 +139,20 @@ if (command === 'mark-in-progress' || command === 'mark-done') {
     updateFile();
 
     console.log(`Task updated successfully (ID: ${id})`);
+    process.exit(1);
+}
+
+if (command === 'list') {
+    const [status] = args;
+
+    if (status && !['done', 'todo', 'in-progress'].includes(status)) {
+        console.log('Invalid status');
+        process.exit(1);
+    }
+
+
+    const filteredTasks = status ? tasks.filter(task => task.status === status) : tasks;
+    console.log(JSON.stringify(filteredTasks, null, 2));
     process.exit(1);
 }
 
