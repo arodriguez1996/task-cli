@@ -2,6 +2,10 @@
 
 This is a command-line interface (CLI) task tracker application built with Node.js (v20). The tool allows users to efficiently manage tasks from the terminal.
 
+## Project Overview
+
+This project is part of the [Task Tracker project](https://roadmap.sh/projects/task-tracker) from [roadmap.sh](https://roadmap.sh/), a learning resource for developers.
+
 ## Features
 
 - Add new tasks
